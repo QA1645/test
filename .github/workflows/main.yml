@@ -23,8 +23,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Ensure executable permission for vuepress-vite
+        run: chmod +x node_modules/.bin/vuepress-vite
+
       - name: Build
-        run: npm run docs:build
+        run: npx vuepress-vite build src
 
       - name: Deploy to Nginx Server
         env:
@@ -38,5 +41,4 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
-          #scp -r ./docs/.vuepress/dist/* $SSH_USERNAME@$SSH_HOST:$REMOTE_PATH
           sshpass -p $SSH_PASSWORD scp -r ./dev-ops/nginx/html/* root@$SSH_HOST:$REMOTE_PATH
